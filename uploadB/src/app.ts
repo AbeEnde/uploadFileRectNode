@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const port = 3001;
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send('Hello am taking care of apis!');
 
 });
 
@@ -30,14 +30,37 @@ let file ={
 
 const credentials = {
   user: "postgres",
-  host: "localhost",
-  database: "files",
+  host: "postgres",
+  database: "postgres",
   password: "123",
   port: 5432,
 };
 const pool = new Pool(credentials);
 
+const execute = async (query) => {
+  try {
+      await pool.connect();     
+      await pool.query(query);  
+      return true;
+  } catch (error) {
+      console.error(error.stack);
+      return false;
+  } 
+};
 
+
+const text = `
+    CREATE TABLE IF NOT EXISTS "filestbl" (
+	    "size" varchar(300),
+	    "uploaddate" date,
+	    "filename" VARCHAR(300) 
+    );`;
+
+execute(text).then(result => {
+    if (result) {
+        console.log('Table created');
+    }
+});
 
 
 const date =()=>{
@@ -76,7 +99,7 @@ app.get("/getFileList",getAll);
 app.delete("/remove/:id", (req ,res) => {
  
   try {
-    const text = `DELETE FROM filestbl WHERE fileName = $1`;
+    const text = `DELETE FROM filestbl WHERE filename = $1`;
     const values = [req.params.id];
     console.log(values);
     res.json({status:'ok',result:'deleted'+req.params.id});
