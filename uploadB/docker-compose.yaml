@@ -1,0 +1,27 @@
+version: "3.3"
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./scripts/:/docker-entrypoint-initdb.d/
+      - fiels:/var/lib/postgresql/data
+  api:
+    build:
+      context: .
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_HOSTNAME: postgres
+    depends_on:
+      - postgres
+    ports:
+      - "3001:3001"
+volumes:
+  fiels:
+  
